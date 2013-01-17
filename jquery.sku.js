@@ -1,43 +1,96 @@
 (function ($) {
-	var container;
+	var $container;
 	var availability;
-	var sections;
+	var $sections;
+	
+	var checkUnavail = function($section, skuID) {
+		$section.find('input').each(function(){
+			$this = $(this);
+			$label = $this.parents('label');
+			var val = $this.val();
+			
+			if (availability[skuID + val] || availability[val + skuID])
+			{
+				$label.removeClass('unavailable');
+			}
+			else
+			{
+				$label.addClass('unavailable');
+			}
+		});
+	};
+	
+	var resetUnavail = function() { $sections.find('.unavailable').removeClass('unavailable'); }
 	
 	var methods = {
 		init: function() {
-			container = this;
+			$container = this;
 			availability = this.data('skuAvailability');
-			sections = this.find('.sku-buttons');
+			$sections = this.find('.sku-buttons');
 			
 			//handle possible case where sku is preselected server-side
 			methods.refresh();
 			
-			sections.find('input[type=radio]').change(function() {
+			$sections.find('input[type=radio]').change(function() {
 				methods.refresh();
 				
 				var label = $(this).parents('label');
 				label.addClass('selected').siblings().removeClass('selected');
 			});
+			
+			$sections.find('label').hover(function() {
+				$(this).addClass('is-hovered');
+				methods.refresh();
+			}, function() {
+				$(this).removeClass('is-hovered');
+				methods.refresh();
+			});
 		},
 		refresh: function() {
-			var doCheckAvail = true;
+			resetUnavail();
+			
+			var doCheckCanBuy = true;
 			var currentSku = '';
 			
-			sections.each(function() {
+			$sections.each(function() {
 				var $section = $(this);
-				var $checked = $section.find(':checked');
 				
-				if ($checked.length)
+				var $input = null;
+				var skuID = null;
+				var skuText = null;
+				
+				//check hover first; if nothing hovered, then check checked
+				var $hovered = $section.find('.is-hovered')
+				if ($hovered.length)
+					$input = $hovered.find('input');
+				else
 				{
-					$section.find('.current-choice').text($checked.data('skuText'));
-					
-					currentSku = $checked.val() + currentSku;
+					var $checked = $section.find(':checked');
+					if ($checked.length)
+						$input = $checked;
 				}
-				else //when this section does not have an option selected
-					doCheckAvail = false;
+				
+				if ($input)
+				{
+					skuText = $input.data('skuText');
+					skuID = $input.val();
+				}
+				
+				if (skuID)
+				{
+					currentSku = skuID + currentSku;
+					checkUnavail($section.siblings('.sku-buttons'), skuID);
+				}
+				else //when nothing selected or hovered
+				{
+					skuText = '';
+					doCheckCanBuy = false;
+				}
+				
+				$section.find('.current-choice').text(skuText);
 			});
 			
-			if (doCheckAvail)
+			if (doCheckCanBuy)
 			{
 				if (availability[currentSku])
 				{
