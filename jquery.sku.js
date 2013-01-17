@@ -5,8 +5,7 @@
 	var $container;
 	var $sections;
 	
-	var $btnAddToCart;
-	var $btnNotAvail;
+	var $btnAddToCart, $btnNotAvail, $speedbuy;
 	
 	var checkUnavail = function($section, skuID) {
 		$section.find('input').each(function(){
@@ -35,6 +34,7 @@
 			
 			$btnAddToCart = this.find('.cta-checkout .btn-primary');
 			$btnNotAvail = this.find('.cta-checkout .btn-danger.disabled');
+			$speedbuy = this.find('.cta-checkout .speedbuy');
 			
 			//hack to fix issue where IE8 and below has a problem where
 			//clicking an <img> in a <label> doesn't trigger the form element
@@ -128,11 +128,13 @@
 				if (availability[currentSku])
 				{
 					$btnAddToCart.show();
+					$speedbuy.show();
 					$btnNotAvail.hide();
 				}
 				else
 				{
 					$btnAddToCart.hide();
+					$speedbuy.hide();
 					$btnNotAvail.show();
 				}
 			}
