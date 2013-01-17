@@ -1,6 +1,6 @@
 (function ($) {
 	var IEHAX = $('.lt-ie9').length;
-	var availability;
+	var availability, sizeText;
 	
 	var $container;
 	var $sections;
@@ -12,8 +12,9 @@
 			$this = $(this);
 			$label = $this.parents('label');
 			var val = $this.val();
+			var avail = availability[skuID + val] || availability[val + skuID] || null;
 			
-			if (availability[skuID + val] || availability[val + skuID])
+			if (avail && avail == 'I')
 			{
 				$label.removeClass('unavailable');
 			}
@@ -30,6 +31,8 @@
 		init: function() {
 			$container = this;
 			availability = this.data('skuAvailability');
+			sizeText = this.find('[data-sizes]').data('sizes');
+			
 			$sections = this.find('.sku-buttons');
 			
 			$btnAddToCart = this.find('.cta-checkout .btn-primary');
@@ -82,7 +85,7 @@
 				
 				var $input = null;
 				var skuID = null;
-				var skuText = null;
+				var skuText = '';
 				
 				//check hover first; if nothing hovered, then check checked
 				if (!ignoreHover)
@@ -104,18 +107,13 @@
 				
 				if ($input)
 				{
-					skuText = $input.data('skuText');
 					skuID = $input.val();
-				}
-				
-				if (skuID)
-				{
+					skuText = sizeText[skuID];
 					currentSku = skuID + currentSku;
 					checkUnavail($section.siblings('.sku-buttons'), skuID);
 				}
 				else //when nothing selected or hovered
 				{
-					skuText = '';
 					doCheckCanBuy = false;
 				}
 				
