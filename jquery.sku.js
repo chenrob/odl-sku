@@ -126,7 +126,7 @@
 			
 			if (doCheckCanBuy)
 			{
-				if (isAvailable(sku))
+				if (isAvailable(currentSku))
 				{
 					$btnAddToCart.show();
 					$speedbuy.show();
