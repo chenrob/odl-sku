@@ -1,7 +1,11 @@
 (function ($) {
-	var $container;
 	var availability;
+	
+	var $container;
 	var $sections;
+	
+	var $btnAddToCart;
+	var $btnNotAvail;
 	
 	var checkUnavail = function($section, skuID) {
 		$section.find('input').each(function(){
@@ -28,20 +32,24 @@
 			availability = this.data('skuAvailability');
 			$sections = this.find('.sku-buttons');
 			
+			$btnAddToCart = this.find('.cta-checkout .btn-primary');
+			$btnNotAvail = this.find('.cta-checkout .btn-danger.disabled');
+			
 			//hack to fix issue where IE8 and below has a problem where
 			//clicking an <img> in a <label> doesn't trigger the form element
+			//modified from http://snook.ca/archives/javascript/using_images_as
 			if ($('.lt-ie9').length)
 			{
-				$sections.find('label img').click(function(e){
+				$sections.find('label img').click(function(){
 					$(this).parents('label').find('input').click();
 				});
 			}
 			
 			//handle possible case where sku is preselected server-side
-			methods.refresh();
+			methods.refresh(true);
 			
 			$sections.find('input[type=radio]').change(function() {
-				methods.refresh();
+				methods.refresh(true);
 				
 				var label = $(this).parents('label');
 				label.addClass('selected').siblings().removeClass('selected');
@@ -49,13 +57,13 @@
 			
 			$sections.find('label').hover(function() {
 				$(this).addClass('is-hovered');
-				methods.refresh();
+				methods.refresh(false);
 			}, function() {
 				$(this).removeClass('is-hovered');
-				methods.refresh();
+				methods.refresh(false);
 			});
 		},
-		refresh: function() {
+		refresh: function(ignoreHover) {
 			resetUnavail();
 			
 			var doCheckCanBuy = true;
@@ -69,10 +77,17 @@
 				var skuText = null;
 				
 				//check hover first; if nothing hovered, then check checked
-				var $hovered = $section.find('.is-hovered')
-				if ($hovered.length)
-					$input = $hovered.find('input');
-				else
+				if (!ignoreHover)
+				{
+					var $hovered = $section.find('.is-hovered')
+					if ($hovered.length)
+					{
+						$input = $hovered.find('input');
+						doCheckCanBuy = false; //too jarring to change the cta buttons on hover
+					}
+				}
+				
+				if (!$input)
 				{
 					var $checked = $section.find(':checked');
 					if ($checked.length)
@@ -103,11 +118,13 @@
 			{
 				if (availability[currentSku])
 				{
-					console.log('AVAILABLE: ' + currentSku);
+					$btnAddToCart.show();
+					$btnNotAvail.hide();
 				}
 				else
 				{
-					console.log('NOT AVAILABLE: ' + currentSku);
+					$btnAddToCart.hide();
+					$btnNotAvail.show();
 				}
 			}
 		}
