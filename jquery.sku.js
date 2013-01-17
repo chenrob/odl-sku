@@ -42,7 +42,7 @@
 			if (IEHAX) //IE8 and below hax
 			{
 				$sections.find('label img').click(function(){
-					$(this).parents('label').find('input').click();
+					$(this).siblings('input').click();
 				});
 			}
 			
