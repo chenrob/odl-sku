@@ -70,7 +70,7 @@
 		refresh: function(ignoreHover) {
 			resetUnavail();
 			
-			var doCheckCanBuy = true;
+			var doCheckCanBuy = $sections.length > 0;
 			var currentSku = '';
 			
 			$sections.each(function() {
@@ -145,4 +145,3 @@
 			$.error('Method ' +  method + ' does not exist on jQuery.fn.sku');
 	};
 })(jQuery);
-
