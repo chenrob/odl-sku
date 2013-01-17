@@ -71,6 +71,7 @@
 			
 			$sections.each(function() {
 				var $section = $(this);
+				var isColorSection = $section.hasClass('sku-options');
 				
 				var $input = null;
 				var skuID = null;
@@ -112,6 +113,7 @@
 				}
 				
 				$section.find('.current-choice').text(skuText);
+				$(window).trigger('refresh.sku.' + (isColorSection ? 'color' : 'size'), [skuID, skuText]);
 			});
 			
 			if (doCheckCanBuy)
