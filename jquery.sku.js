@@ -50,32 +50,35 @@
 			methods.refresh(true);
 			
 			$sections.find('input[type=radio]').change(function() {
+				var $this = $(this);
 				if (IEHAX)
-					$(this).prop('checked', 'checked');
+					$this.prop('checked', 'checked');
 				
-				methods.refresh(true);
+				methods.refresh(true, $this);
 				
-				var label = $(this).parents('label');
+				var label = $this.parents('label');
 				label.addClass('selected').siblings().removeClass('selected');
 			});
 			
 			$sections.find('label').hover(function() {
-				$(this).addClass('is-hovered');
-				methods.refresh(false);
+				var $this = $(this);
+				$this.addClass('is-hovered');
+				methods.refresh(false, $this);
 			}, function() {
-				$(this).removeClass('is-hovered');
-				methods.refresh(false);
+				var $this = $(this);
+				$this.removeClass('is-hovered');
+				methods.refresh(false, $this);
 			});
 		},
-		refresh: function(ignoreHover) {
+		refresh: function(ignoreHover, $this) {
 			resetUnavail();
 			
 			var doCheckCanBuy = $sections.length > 0;
 			var currentSku = '';
+			var isColorSection = $this && $this.parents('.sku-options').length;
 			
 			$sections.each(function() {
 				var $section = $(this);
-				var isColorSection = $section.hasClass('sku-options');
 				
 				var $input = null;
 				var skuID = null;
