@@ -7,14 +7,17 @@
 	
 	var $btnAddToCart, $btnNotAvail, $speedbuy;
 	
+	var isAvailable = function(sku) {
+		return availability[sku] && availability[sku] == 'I';
+	};
+	
 	var checkUnavail = function($section, skuID) {
 		$section.find('input').each(function(){
 			$this = $(this);
 			$label = $this.parents('label');
 			var val = $this.val();
-			var avail = availability[skuID + val] || availability[val + skuID] || null;
 			
-			if (avail && avail == 'I')
+			if (isAvailable(skuID + val) || isAvailable(val + skuID) || false)
 			{
 				$label.removeClass('unavailable');
 			}
@@ -108,7 +111,7 @@
 				if ($input)
 				{
 					skuID = $input.val();
-					skuText = sizeText[skuID];
+					skuText = $input.data('skuText') || sizeText[skuID];
 					currentSku = skuID + currentSku;
 					checkUnavail($section.siblings('.sku-buttons'), skuID);
 				}
@@ -123,7 +126,7 @@
 			
 			if (doCheckCanBuy)
 			{
-				if (availability[currentSku])
+				if (isAvailable(sku))
 				{
 					$btnAddToCart.show();
 					$speedbuy.show();
