@@ -39,7 +39,7 @@
 			
 			if (doCheckAvail)
 			{
-				if (avail[currentSku])
+				if (availability[currentSku])
 				{
 					console.log('AVAILABLE: ' + currentSku);
 				}
