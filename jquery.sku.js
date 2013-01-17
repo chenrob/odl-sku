@@ -28,6 +28,15 @@
 			availability = this.data('skuAvailability');
 			$sections = this.find('.sku-buttons');
 			
+			//hack to fix issue where IE8 and below has a problem where
+			//clicking an <img> in a <label> doesn't trigger the form element
+			if ($('.lt-ie9').length)
+			{
+				$sections.find('label img').click(function(e){
+					$(this).parents('label').find('input').click();
+				});
+			}
+			
 			//handle possible case where sku is preselected server-side
 			methods.refresh();
 			
