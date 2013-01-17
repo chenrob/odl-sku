@@ -1,4 +1,5 @@
 (function ($) {
+	var IEHAX = $('.lt-ie9').length;
 	var availability;
 	
 	var $container;
@@ -38,7 +39,7 @@
 			//hack to fix issue where IE8 and below has a problem where
 			//clicking an <img> in a <label> doesn't trigger the form element
 			//modified from http://snook.ca/archives/javascript/using_images_as
-			if ($('.lt-ie9').length)
+			if (IEHAX) //IE8 and below hax
 			{
 				$sections.find('label img').click(function(){
 					$(this).parents('label').find('input').click();
@@ -49,6 +50,9 @@
 			methods.refresh(true);
 			
 			$sections.find('input[type=radio]').change(function() {
+				if (IEHAX)
+					$(this).prop('checked', 'checked');
+				
 				methods.refresh(true);
 				
 				var label = $(this).parents('label');
