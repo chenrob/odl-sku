@@ -20,12 +20,34 @@
 			});
 		},
 		refresh: function() {
+			var doCheckAvail = true;
+			var currentSku = '';
+			
 			sections.each(function() {
 				var $section = $(this);
 				var $checked = $section.find(':checked');
+				
 				if ($checked.length)
+				{
 					$section.find('.current-choice').text($checked.data('skuText'));
+					
+					currentSku = $checked.val() + currentSku;
+				}
+				else //when this section does not have an option selected
+					doCheckAvail = false;
 			});
+			
+			if (doCheckAvail)
+			{
+				if (avail[currentSku])
+				{
+					console.log('AVAILABLE: ' + currentSku);
+				}
+				else
+				{
+					console.log('NOT AVAILABLE: ' + currentSku);
+				}
+			}
 		}
 	};
 	
